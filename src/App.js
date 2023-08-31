@@ -1,10 +1,15 @@
 import React from 'react';
 
+import { Provider } from 'react-redux';
+import store from 'app/store';
+
 function App() {
 	return (
-		<div className="text-amber-800 underline decoration-dotted">
-			<p>Hola desde App</p>
-		</div>
+		<Provider store={store}>
+			<div className="text-amber-800 underline decoration-dotted">
+				<p>Hola desde App</p>
+			</div>
+		</Provider>
 	);
 }
 
