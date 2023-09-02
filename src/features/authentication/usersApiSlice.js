@@ -21,7 +21,16 @@ export const userApiSlice = createApi({
 				};
 			},
 		}),
+		activateAccount: builder.mutation({
+			query(body) {
+				return {
+					url: 'users/activation/',
+					method: 'POST',
+					body: JSON.stringify(body),
+				};
+			},
+		}),
 	}),
 });
 
-export const { useAddUserMutation } = userApiSlice;
+export const { useAddUserMutation, useActivateAccountMutation } = userApiSlice;
