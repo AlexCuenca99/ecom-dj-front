@@ -30,7 +30,19 @@ export const userApiSlice = createApi({
 				};
 			},
 		}),
+		getMe: builder.query({
+			query(token) {
+				return {
+					url: 'users/me',
+					method: 'GET',
+					headers: {
+						Authentication: `Bearer ${token}`,
+					},
+				};
+			},
+		}),
 	}),
 });
 
-export const { useAddUserMutation, useActivateAccountMutation } = userApiSlice;
+export const { useAddUserMutation, useActivateAccountMutation, useGetMeQuery } =
+	userApiSlice;
