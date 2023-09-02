@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { ActivateAccountModal } from 'features/authentication/components';
+import { useParams } from 'react-router-dom';
+
 export function ActivateAccountPage() {
-	return (
-		<div>
-			<h1>ActivateAccountPage</h1>
-		</div>
-	);
+	const { uid, token } = useParams();
+
+	return <ActivateAccountModal uid={uid} token={token} />;
 }
