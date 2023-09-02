@@ -10,8 +10,9 @@ export const authenticationApiSlice = createApi({
 			return headers;
 		},
 	}),
+	tagTypes: ['Jwt'],
 	endpoints: (builder) => ({
-		signUp: builder.mutation({
+		signIn: builder.mutation({
 			query(body) {
 				return {
 					url: 'create/',
@@ -23,4 +24,4 @@ export const authenticationApiSlice = createApi({
 	}),
 });
 
-export const { useSignUpMutation } = authenticationApiSlice;
+export const { useSignInMutation } = authenticationApiSlice;
