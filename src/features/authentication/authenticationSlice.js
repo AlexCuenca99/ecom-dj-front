@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from 'utils/constanst';
 
 const initialState = { isAuth: false, user: null };
 
@@ -15,6 +16,8 @@ const authenticationSlice = createSlice({
 				birth: action.payload.birth,
 				email: action.payload.email,
 			};
+			localStorage.setItem(ACCESS_TOKEN, action.payload.access);
+			localStorage.setItem(REFRESH_TOKEN, action.payload.refresh);
 		},
 		logout(state) {
 			state.isAuth = false;
