@@ -30,13 +30,13 @@ export const userApiSlice = createApi({
 				};
 			},
 		}),
-		getMe: builder.query({
+		getMe: builder.mutation({
 			query(token) {
 				return {
-					url: 'users/me',
+					url: 'users/me/',
 					method: 'GET',
 					headers: {
-						Authentication: `Bearer ${token}`,
+						Authorization: `Bearer ${token}`,
 					},
 				};
 			},
@@ -44,5 +44,8 @@ export const userApiSlice = createApi({
 	}),
 });
 
-export const { useAddUserMutation, useActivateAccountMutation, useGetMeQuery } =
-	userApiSlice;
+export const {
+	useAddUserMutation,
+	useActivateAccountMutation,
+	useGetMeMutation,
+} = userApiSlice;
