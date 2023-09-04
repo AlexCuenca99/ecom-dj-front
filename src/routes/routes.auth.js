@@ -1,11 +1,11 @@
 import { AuthLayout } from 'layouts';
-import { LoginPage } from 'pages/AuthPages';
+import { HomePage } from 'pages/Common';
 
 const routesAuth = [
 	{
 		path: '/',
 		layout: AuthLayout,
-		component: LoginPage,
+		component: HomePage,
 	},
 ];
 
