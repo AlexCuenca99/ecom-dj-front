@@ -2,7 +2,12 @@ import React from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
+import { useResetPasswordMutation } from '../../usersApiSlice';
+
 export function ForgetPasswordForm() {
+	const [resetPassword, { isLoading, isError, error, isSuccess }] =
+		useResetPasswordMutation();
+
 	const formik = useFormik({
 		initialValues: initialValues(),
 		validationSchema: Yup.object(validationSchema()),
@@ -11,7 +16,7 @@ export function ForgetPasswordForm() {
 		validateOnChange: false,
 
 		onSubmit: (formValues) => {
-			console.log(formValues);
+			resetPassword(formValues);
 		},
 	});
 	return (
@@ -24,7 +29,7 @@ export function ForgetPasswordForm() {
 						alt="Your Company"
 					/>
 					<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-						Sign in to your account
+						Forgot your password?
 					</h2>
 				</div>
 
@@ -47,6 +52,7 @@ export function ForgetPasswordForm() {
 									value={formik.values.email}
 									onChange={formik.handleChange}
 									onBlur={formik.handleBlur}
+									disabled={isLoading}
 									required
 									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								/>
@@ -86,7 +92,7 @@ export function ForgetPasswordForm() {
 										/>
 									</svg>
 								) : null}
-								Sign-in
+								Recover Password
 							</button>
 						</div>
 					</form>
@@ -98,9 +104,22 @@ export function ForgetPasswordForm() {
 							<strong className="block font-medium text-red-800">
 								Something went wrong
 							</strong>
-
 							<p className="mt-2 text-sm text-red-700">
-								{JSON.stringify(error.data.detail)}
+								{JSON.stringify(error.data[0])}
+							</p>
+						</div>
+					) : null}
+					{isSuccess ? (
+						<div
+							role="alert"
+							className="rounded border-s-4 border-green-500 bg-green-50 p-4"
+						>
+							<strong className="block font-medium text-green-800">
+								All was good
+							</strong>
+							<p className="mt-2 text-sm text-green-700">
+								An email with a recovery link has been sent to{' '}
+								{formik.values.email}
 							</p>
 						</div>
 					) : null}
