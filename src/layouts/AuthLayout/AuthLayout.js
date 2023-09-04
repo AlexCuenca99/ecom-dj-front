@@ -1,24 +1,24 @@
 import React, { useEffect } from 'react';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { NavBar, Footer } from 'components';
-
 import { ACCESS_TOKEN } from 'utils/constanst';
-import { useVerifyMutation } from 'features/authentication/authenticationApiSlice';
-import { useGetMeMutation } from 'features/authentication/usersApiSlice';
+import { LoginPage } from 'pages/AuthPages';
 import { login } from 'features/authentication/authenticationSlice';
-import { useDispatch } from 'react-redux';
+import { useGetMeMutation } from 'features/authentication/usersApiSlice';
+import { useVerifyMutation } from 'features/authentication/authenticationApiSlice';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 export function AuthLayout(props) {
 	const { children } = props;
+	const auth = useSelector((state) => state.authentication);
 
+	const [getMe] = useGetMeMutation();
 	const [verify] = useVerifyMutation();
 
 	const dispatch = useDispatch();
-
-	const [getMe] = useGetMeMutation();
 
 	useEffect(() => {
 		let token = localStorage.getItem(ACCESS_TOKEN);
@@ -42,6 +42,8 @@ export function AuthLayout(props) {
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	if (!auth.isAuth) return <LoginPage />;
 
 	return (
 		<>
