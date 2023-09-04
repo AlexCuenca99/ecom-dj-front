@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { login } from 'features/authentication/authenticationSlice';
 import { useSignInMutation } from '../../authenticationApiSlice';
-import { useGetMeQuery } from '../../usersApiSlice';
+import { useGetMeMutation } from '../../usersApiSlice';
 import { initialValues, validationSchema } from './formSchemas';
 
 export function LoginForm() {
 	const [signIn, { isLoading, isError, error }] = useSignInMutation();
-	const { getMe, isError: isErrorMe } = useGetMeQuery();
+	const [getMe] = useGetMeMutation();
 
 	const dispatch = useDispatch();
 
@@ -24,7 +24,19 @@ export function LoginForm() {
 		onSubmit: (formValues) => {
 			signIn(formValues)
 				.unwrap()
-				.then((_) => {
+				.then((fullfilled) => {
+					const { access, refresh } = fullfilled;
+
+					const payload = { access, refresh };
+
+					getMe(access)
+						.unwrap()
+						.then((fullfilled) => {
+							const loginPayload = { ...fullfilled, ...payload };
+							dispatch(login(loginPayload));
+						})
+						.catch((reject) => console.log('PAYLOAD -> ', reject));
+
 					dispatch(login(formValues));
 				})
 				.catch((rejected) => console.log('Error ->', rejected));
