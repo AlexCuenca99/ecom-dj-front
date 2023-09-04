@@ -41,6 +41,15 @@ export const userApiSlice = createApi({
 				};
 			},
 		}),
+		resetPassword: builder.mutation({
+			query(body) {
+				return {
+					url: 'users/reset_password/',
+					method: 'POST',
+					body: JSON.stringify(body),
+				};
+			},
+		}),
 	}),
 });
 
@@ -48,4 +57,5 @@ export const {
 	useAddUserMutation,
 	useActivateAccountMutation,
 	useGetMeMutation,
+	useResetPasswordMutation,
 } = userApiSlice;
