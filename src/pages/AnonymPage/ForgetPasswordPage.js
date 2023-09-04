@@ -1,9 +1,6 @@
 import React from 'react';
+import { ForgetPasswordForm } from 'features/authentication/components';
 
 export function ForgetPasswordPage() {
-	return (
-		<div>
-			<h1>ForgetPasswordPage</h1>
-		</div>
-	);
+	return <ForgetPasswordForm />;
 }
