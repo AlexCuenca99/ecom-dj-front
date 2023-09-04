@@ -21,7 +21,16 @@ export const authenticationApiSlice = createApi({
 				};
 			},
 		}),
+		verify: builder.mutation({
+			query(body) {
+				return {
+					url: 'verify/',
+					method: 'POST',
+					body: JSON.stringify(body),
+				};
+			},
+		}),
 	}),
 });
 
-export const { useSignInMutation } = authenticationApiSlice;
+export const { useSignInMutation, useVerifyMutation } = authenticationApiSlice;
