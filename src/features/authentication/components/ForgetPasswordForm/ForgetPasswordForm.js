@@ -1,6 +1,19 @@
 import React from 'react';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
 
 export function ForgetPasswordForm() {
+	const formik = useFormik({
+		initialValues: initialValues(),
+		validationSchema: Yup.object(validationSchema()),
+		validateOnMount: true,
+		validateOnBlur: true,
+		validateOnChange: false,
+
+		onSubmit: (formValues) => {
+			console.log(formValues);
+		},
+	});
 	return (
 		<>
 			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -45,44 +58,6 @@ export function ForgetPasswordForm() {
 							) : null}
 						</div>
 						{/* END EMAIL */}
-
-						{/* PASSWORDS */}
-						<div className="flex items-center justify-between">
-							<label
-								htmlFor="password"
-								className="block text-sm font-medium leading-6 text-gray-900"
-							>
-								Password
-							</label>
-							<div className="text-sm">
-								<Link
-									to="/forget-password"
-									className="font-semibold text-indigo-600 hover:text-indigo-500"
-								>
-									Forgot password?
-								</Link>
-							</div>
-						</div>
-						<div className="mt-2">
-							<input
-								id="password"
-								name="password"
-								type="password"
-								autoComplete="current-password"
-								value={formik.values.password}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								required
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-							/>
-						</div>
-						{formik.touched.password && formik.errors.password ? (
-							<div className="mt-2 text-sm text-red-600">
-								{formik.errors.password}
-							</div>
-						) : null}
-
-						{/* END PASSWORDS */}
 
 						<div>
 							<button
@@ -137,4 +112,18 @@ export function ForgetPasswordForm() {
 			</div>
 		</>
 	);
+}
+
+function initialValues() {
+	return {
+		email: '',
+	};
+}
+
+function validationSchema() {
+	return {
+		email: Yup.string()
+			.email('Invalid email address')
+			.required('Email address is required'),
+	};
 }
