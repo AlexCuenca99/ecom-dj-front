@@ -43,7 +43,7 @@ export function AuthLayout(props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (!auth.isAuth) return <LoginPage />;
+	//if (!auth.isAuth) return <LoginPage />;
 
 	return (
 		<>
