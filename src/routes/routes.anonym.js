@@ -1,7 +1,11 @@
 import { AuthLayout } from 'layouts';
 import { LoginPage } from 'pages/AuthPages';
-import { ForgetPasswordPage } from 'pages/AnonymPage';
-import { ActivateAccountPage, SignUpPage } from 'pages/AnonymPage';
+import {
+	ActivateAccountPage,
+	SignUpPage,
+	ForgetPasswordPage,
+	ResetPasswordConfirmPage,
+} from 'pages/AnonymPage';
 
 const routesAnonym = [
 	{
@@ -23,6 +27,11 @@ const routesAnonym = [
 		path: '/forget-password',
 		layout: AuthLayout,
 		component: ForgetPasswordPage,
+	},
+	{
+		path: '/reset-password-confirm/:uid/:token',
+		layout: AuthLayout,
+		component: ResetPasswordConfirmPage,
 	},
 ];
 
