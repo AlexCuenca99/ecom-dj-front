@@ -186,6 +186,16 @@ export function LoginForm() {
 						/>
 					) : null}
 
+					<div className="text-sm mt-5 text-center">
+						Do not have an account?{' '}
+						<Link
+							to="/signup"
+							className="font-semibold text-indigo-600 hover:text-indigo-500"
+						>
+							Sign Up
+						</Link>
+					</div>
+
 					<p className="mt-10 text-center text-sm text-gray-500">
 						eComDJ Team
 					</p>
