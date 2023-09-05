@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
+import { FormAlert } from 'components';
 import { useResetPasswordMutation } from '../../usersApiSlice';
+import { ERROR_ALERT_TITLE, SUCCESS_ALERT_TITLE } from 'utils/constanst';
 
 export function ForgetPasswordForm() {
 	const [resetPassword, { isLoading, isError, error, isSuccess }] =
 		useResetPasswordMutation();
+
+	const [showAlert, setShowAlert] = useState(false);
 
 	const formik = useFormik({
 		initialValues: initialValues(),
@@ -16,7 +20,22 @@ export function ForgetPasswordForm() {
 		validateOnChange: false,
 
 		onSubmit: (formValues) => {
-			resetPassword(formValues);
+			resetPassword(formValues)
+				.unwrap()
+				.then((_) => {
+					setShowAlert(true);
+					setTimeout(() => {
+						setShowAlert(false);
+					}, 3000);
+
+					formik.resetForm();
+				})
+				.catch((_) => {
+					setShowAlert(true);
+					setTimeout(() => {
+						setShowAlert(false);
+					}, 3000);
+				});
 		},
 	});
 	return (
@@ -96,32 +115,22 @@ export function ForgetPasswordForm() {
 							</button>
 						</div>
 					</form>
+
 					{isError ? (
-						<div
-							role="alert"
-							className="rounded border-s-4 border-red-500 bg-red-50 p-4"
-						>
-							<strong className="block font-medium text-red-800">
-								Something went wrong
-							</strong>
-							<p className="mt-2 text-sm text-red-700">
-								{JSON.stringify(error.data[0])}
-							</p>
-						</div>
+						<FormAlert
+							title={ERROR_ALERT_TITLE}
+							message={JSON.stringify(error.data.email[0])}
+							type="error"
+							showAlert={showAlert}
+						/>
 					) : null}
 					{isSuccess ? (
-						<div
-							role="alert"
-							className="rounded border-s-4 border-green-500 bg-green-50 p-4"
-						>
-							<strong className="block font-medium text-green-800">
-								All was good
-							</strong>
-							<p className="mt-2 text-sm text-green-700">
-								An email with a recovery link has been sent to{' '}
-								{formik.values.email}
-							</p>
-						</div>
+						<FormAlert
+							title={SUCCESS_ALERT_TITLE}
+							message="Check your email for further instructions"
+							type="success"
+							showAlert={showAlert}
+						/>
 					) : null}
 
 					<p className="mt-10 text-center text-sm text-gray-500">
