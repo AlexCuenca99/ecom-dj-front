@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { flatMap } from 'lodash';
 
 export const authenticationApiSlice = createApi({
 	reducerPath: 'authenticationApi',
@@ -19,6 +20,9 @@ export const authenticationApiSlice = createApi({
 					method: 'POST',
 					body: JSON.stringify(body),
 				};
+			},
+			transformErrorResponse: (response, meta, arg) => {
+				return flatMap(response.data, (value) => value);
 			},
 		}),
 		verify: builder.mutation({
