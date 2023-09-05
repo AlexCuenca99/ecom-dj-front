@@ -119,7 +119,7 @@ export function ForgetPasswordForm() {
 					{isError ? (
 						<FormAlert
 							title={ERROR_ALERT_TITLE}
-							message={JSON.stringify(error.data.email[0])}
+							message={error}
 							type="error"
 							showAlert={showAlert}
 						/>
@@ -127,7 +127,9 @@ export function ForgetPasswordForm() {
 					{isSuccess ? (
 						<FormAlert
 							title={SUCCESS_ALERT_TITLE}
-							message="Check your email for further instructions"
+							message={[
+								'Check your email for further instructions',
+							]}
 							type="success"
 							showAlert={showAlert}
 						/>
