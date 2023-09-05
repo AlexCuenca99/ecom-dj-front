@@ -1,3 +1,4 @@
+import { flatMap } from 'lodash';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const userApiSlice = createApi({
@@ -57,6 +58,9 @@ export const userApiSlice = createApi({
 					method: 'POST',
 					body: JSON.stringify(body),
 				};
+			},
+			transformErrorResponse: (response, meta, arg) => {
+				return flatMap(response.data, (value) => value);
 			},
 		}),
 	}),
