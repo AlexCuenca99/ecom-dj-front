@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import * as Yup from 'yup';
 import { map } from 'lodash';
 import { useFormik } from 'formik';
@@ -7,7 +7,9 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 import { people } from 'utils/feeders';
+import { FormAlert } from 'components';
 import { validationSchema, initialValues } from './formSchemas';
+import { ERROR_ALERT_TITLE, SUCCESS_ALERT_TITLE } from 'utils/constanst';
 import { useAddUserMutation } from 'features/authentication/usersApiSlice';
 
 function classNames(...classes) {
@@ -18,6 +20,8 @@ export function SignUpForm() {
 	const [addUser, { isLoading, isSuccess, isError, error }] =
 		useAddUserMutation();
 
+	const [showAlert, setShowAlert] = useState(false);
+
 	const formik = useFormik({
 		initialValues: initialValues(),
 		validationSchema: Yup.object(validationSchema()),
@@ -27,8 +31,21 @@ export function SignUpForm() {
 
 		onSubmit: (formValues) => {
 			console.log(formValues);
-			addUser(formValues);
-			if (isSuccess) formik.resetForm();
+			addUser(formValues)
+				.unwrap()
+				.then((_) => {
+					setShowAlert(true);
+					setTimeout(() => {
+						setShowAlert(false);
+					}, 4000);
+					formik.resetForm();
+				})
+				.catch((_) => {
+					setShowAlert(true);
+					setTimeout(() => {
+						setShowAlert(false);
+					}, 4000);
+				});
 		},
 	});
 
@@ -411,32 +428,22 @@ export function SignUpForm() {
 						</div>
 					</form>
 					{isError ? (
-						<div
-							role="alert"
-							class="rounded border-s-4 border-red-500 bg-red-50 p-4"
-						>
-							<strong class="block font-medium text-red-800">
-								Something went wrong
-							</strong>
-
-							<p class="mt-2 text-sm text-red-700">
-								{JSON.stringify(error.data)}
-							</p>
-						</div>
+						<FormAlert
+							title={ERROR_ALERT_TITLE}
+							message={error}
+							type="error"
+							showAlert={showAlert}
+						/>
 					) : null}
 					{isSuccess ? (
-						<div
-							role="alert"
-							class="rounded border-s-4 border-green-500 bg-green-50 p-4"
-						>
-							<strong class="block font-medium text-green-800">
-								All was good
-							</strong>
-
-							<p class="mt-2 text-sm text-green-700">
-								A confirmation email has been sent to your email
-							</p>
-						</div>
+						<FormAlert
+							title={SUCCESS_ALERT_TITLE}
+							message={[
+								'A confirmation email has been sent to your email',
+							]}
+							type="success"
+							showAlert={showAlert}
+						/>
 					) : null}
 
 					<p className="mt-10 text-center text-sm text-gray-500">
