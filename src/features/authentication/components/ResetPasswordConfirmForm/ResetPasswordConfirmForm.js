@@ -169,7 +169,9 @@ export function ResetPasswordConfirmForm() {
 					{isSuccess ? (
 						<FormAlert
 							title={SUCCESS_ALERT_TITLE}
-							message="Your password has been successfully updated"
+							message={[
+								'Your password has been successfully updated',
+							]}
 							type="success"
 							showAlert={showAlert}
 						/>
