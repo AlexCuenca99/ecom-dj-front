@@ -21,6 +21,9 @@ export const userApiSlice = createApi({
 					body: JSON.stringify(body),
 				};
 			},
+			transformErrorResponse: (response, meta, arg) => {
+				return flatMap(response.data, (value) => value);
+			},
 		}),
 		activateAccount: builder.mutation({
 			query(body) {
