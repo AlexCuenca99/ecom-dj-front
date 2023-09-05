@@ -29,7 +29,7 @@ const routesAnonym = [
 		component: ForgetPasswordPage,
 	},
 	{
-		path: '/reset-password-confirm/:uid/:token',
+		path: '/email/reset/confirm/:uid/:token',
 		layout: AuthLayout,
 		component: ResetPasswordConfirmPage,
 	},
