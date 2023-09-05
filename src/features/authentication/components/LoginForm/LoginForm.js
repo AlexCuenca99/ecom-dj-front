@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { login } from 'features/authentication/authenticationSlice';
-import { useSignInMutation } from '../../authenticationApiSlice';
+import { FormAlert } from 'components';
+import { ERROR_ALERT_TITLE } from 'utils/constanst';
 import { useGetMeMutation } from '../../usersApiSlice';
+import { useSignInMutation } from '../../authenticationApiSlice';
+import { login } from 'features/authentication/authenticationSlice';
 import { initialValues, validationSchema } from './formSchemas';
 
 export function LoginForm() {
@@ -14,9 +17,11 @@ export function LoginForm() {
 
 	const dispatch = useDispatch();
 
+	const [showAlert, setShowAlert] = useState(false);
+
 	const formik = useFormik({
 		initialValues: initialValues(),
-		//validationSchema: Yup.object(validationSchema()),
+		validationSchema: Yup.object(validationSchema()),
 		validateOnMount: true,
 		validateOnBlur: true,
 		validateOnChange: false,
@@ -34,12 +39,27 @@ export function LoginForm() {
 						.then((fullfilled) => {
 							const loginPayload = { ...fullfilled, ...payload };
 							dispatch(login(loginPayload));
+							setShowAlert(true);
+							setTimeout(() => {
+								setShowAlert(false);
+							}, 4000);
+							formik.resetForm();
 						})
-						.catch((reject) => console.log('PAYLOAD -> ', reject));
+						.catch((_) => {
+							setShowAlert(true);
+							setTimeout(() => {
+								setShowAlert(false);
+							}, 4000);
+						});
 
 					dispatch(login(formValues));
 				})
-				.catch((rejected) => console.log('Error ->', rejected));
+				.catch((_) => {
+					setShowAlert(true);
+					setTimeout(() => {
+						setShowAlert(false);
+					}, 4000);
+				});
 		},
 	});
 
@@ -158,18 +178,12 @@ export function LoginForm() {
 						</div>
 					</form>
 					{isError ? (
-						<div
-							role="alert"
-							className="rounded border-s-4 border-red-500 bg-red-50 p-4"
-						>
-							<strong className="block font-medium text-red-800">
-								Something went wrong
-							</strong>
-
-							<p className="mt-2 text-sm text-red-700">
-								{JSON.stringify(error.data.detail)}
-							</p>
-						</div>
+						<FormAlert
+							title={ERROR_ALERT_TITLE}
+							message={error}
+							type="error"
+							showAlert={showAlert}
+						/>
 					) : null}
 
 					<p className="mt-10 text-center text-sm text-gray-500">
