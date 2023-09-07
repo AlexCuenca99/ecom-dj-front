@@ -26,16 +26,19 @@ export const categoryApiSlice = createApi({
 			},
 		}),
 
-		listParentCategories: builder.query({
+		listParentCategories: builder.mutation({
 			query() {
 				return {
 					url: 'categories/parents/',
 					method: 'GET',
 				};
 			},
+			transformErrorResponse: (response, meta, arg) => {
+				return flatMap(response.data, (error) => error);
+			},
 		}),
 	}),
 });
 
-export const { useAddCategoryMutation, useListParentCategoriesQuery } =
+export const { useAddCategoryMutation, useListParentCategoriesMutation } =
 	categoryApiSlice;
