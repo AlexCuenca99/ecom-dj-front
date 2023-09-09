@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { HomeBanner } from 'components';
+import { HomeBanner, BannerPromo } from 'components';
 import { ProductsCards } from 'features/products/components';
 
 import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
@@ -80,7 +80,7 @@ export function HomePage() {
 
 	return (
 		<>
-			<HomeBanner
+			<BannerPromo
 				mainText={'Take control of your team.'}
 				subText={
 					'Start building for free, then add a site plan to go live. Account plans unlock additional features.'
