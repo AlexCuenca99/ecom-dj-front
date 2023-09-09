@@ -85,7 +85,9 @@ export function HomePage() {
 				subText={
 					'Start building for free, then add a site plan to go live. Account plans unlock additional features.'
 				}
-				sectionTitle={'Pricing'}
+				btnTitle={'Shop'}
+				btnAction={'/'}
+				images={[]}
 			/>
 			<ProductsCards products={products?.results} />
 		</>
