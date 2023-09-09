@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BestSellingCard } from '../index';
+import { BestSellingCard } from '../BestSellingCard';
 import { map } from 'lodash';
 
 // const products = [
@@ -16,7 +16,7 @@ import { map } from 'lodash';
 // 	// More products...
 // ];
 
-export default function BestSellingCards(props) {
+export function BestSellingCards(props) {
 	const { products } = props;
 
 	return (
