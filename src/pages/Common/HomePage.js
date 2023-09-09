@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { HomeBanner } from 'components';
 import { ProductsCards } from 'features/products/components';
 
-const products = [
+import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
+
+const preProducts = [
 	{
 		id: 1,
 		name: 'Earthen Bottle',
@@ -48,6 +50,34 @@ const products = [
 ];
 
 export function HomePage() {
+	const [limit, setLimit] = useState(4);
+	const [offset, setOffset] = useState('');
+	const [search, setSearch] = useState('');
+	const [priceGte, setPriceGte] = useState('');
+	const [priceGt, setPriceGt] = useState('');
+	const [priceLte, setPriceLte] = useState('');
+	const [priceLt, setPriceLt] = useState('');
+	const [category, setCategory] = useState('');
+	const [ordering, setOrdering] = useState('created');
+
+	const {
+		data: products,
+		isLoading,
+		isError,
+		isFetching,
+		currentData,
+	} = useListProductsQuery({
+		limit,
+		offset,
+		search,
+		priceGte,
+		priceGt,
+		priceLte,
+		priceLt,
+		category,
+		ordering,
+	});
+
 	return (
 		<>
 			<HomeBanner
@@ -57,7 +87,7 @@ export function HomePage() {
 				}
 				sectionTitle={'Pricing'}
 			/>
-			<ProductsCards products={products} />
+			<ProductsCards products={products?.results} />
 		</>
 	);
 }
