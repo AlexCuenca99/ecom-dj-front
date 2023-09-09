@@ -37,8 +37,22 @@ export const categoryApiSlice = createApi({
 				return flatMap(response.data, (error) => error);
 			},
 		}),
+		readParentCategory: builder.mutation({
+			query(id) {
+				return {
+					url: `categories/${id}/parents/`,
+					method: 'GET',
+				};
+			},
+			transformErrorResponse: (response, meta, arg) => {
+				return flatMap(response.data, (error) => error);
+			},
+		}),
 	}),
 });
 
-export const { useAddCategoryMutation, useListParentCategoriesMutation } =
-	categoryApiSlice;
+export const {
+	useAddCategoryMutation,
+	useListParentCategoriesMutation,
+	useReadParentCategoryMutation,
+} = categoryApiSlice;
