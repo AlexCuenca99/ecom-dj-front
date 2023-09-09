@@ -38,7 +38,20 @@ export const productApiSlice = createApi({
 				};
 			},
 		}),
+
+		listRelatedProducts: builder.query({
+			query(id) {
+				return {
+					url: `products/${id}/related-products/`,
+					method: 'GET',
+				};
+			},
+		}),
 	}),
 });
 
-export const { useListProductsQuery, useReadProductQuery } = productApiSlice;
+export const {
+	useListProductsQuery,
+	useReadProductQuery,
+	useListRelatedProductsQuery,
+} = productApiSlice;
