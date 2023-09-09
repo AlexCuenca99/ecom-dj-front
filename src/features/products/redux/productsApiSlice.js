@@ -30,7 +30,15 @@ export const productApiSlice = createApi({
 				};
 			},
 		}),
+		readProduct: builder.query({
+			query(id) {
+				return {
+					url: `products/${id}`,
+					method: 'GET',
+				};
+			},
+		}),
 	}),
 });
 
-export const { useListProductsQuery } = productApiSlice;
+export const { useListProductsQuery, useReadProductQuery } = productApiSlice;
