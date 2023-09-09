@@ -1,13 +1,13 @@
 import React from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
-import {
-	HeartIcon,
-	MinusSmallIcon,
-	PlusSmallIcon,
-} from '@heroicons/react/24/outline';
+import { HeartIcon } from '@heroicons/react/24/outline';
 import { useParams } from 'react-router-dom';
 
-import { useReadProductQuery } from 'features/products/redux/productsApiSlice';
+import {
+	useReadProductQuery,
+	useListRelatedProductsQuery,
+} from 'features/products/redux/productsApiSlice';
+import { ImageGallery } from 'features/products/components';
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ');
@@ -19,27 +19,19 @@ export function ProductDetailsPage() {
 	const {
 		data: product,
 		isLoading,
-		isSuccess,
 		isError,
 		error,
 	} = useReadProductQuery(id);
+
+	const { data: relatedProducts } = useListRelatedProductsQuery();
 
 	return (
 		product && (
 			<div className="bg-white">
 				<div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
 					<div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
-						{/* Image */}
-						<div as="div" className="flex flex-col-reverse">
-							<div className="w-full aspect-w-1 aspect-h-1">
-								<img
-									src={product.photo}
-									alt={product.name}
-									className="w-full h-full object-center object-cover sm:rounded-lg"
-								/>
-							</div>
-						</div>
-						{/* End Image */}
+						<ImageGallery product={product} />
+
 						{/* Product info */}
 						<div className="mt-10 px-4 sm:px-0 sm:mt-16 lg:mt-0">
 							<h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
@@ -111,73 +103,6 @@ export function ProductDetailsPage() {
 									</button>
 								</div>
 							</form>
-
-							{/* PRODUCT FEATURES */}
-							{/* <section
-								aria-labelledby="details-heading"
-								className="mt-12"
-							>
-								<h2 id="details-heading" className="sr-only">
-									Additional details
-								</h2>
-
-								<div className="border-t divide-y divide-gray-200">
-									{product.details.map((detail) => (
-										<Disclosure as="div" key={detail.name}>
-											{({ open }) => (
-												<>
-													<h3>
-														<Disclosure.Button className="group relative w-full py-6 flex justify-between items-center text-left">
-															<span
-																className={classNames(
-																	open
-																		? 'text-indigo-600'
-																		: 'text-gray-900',
-																	'text-sm font-medium'
-																)}
-															>
-																{detail.name}
-															</span>
-															<span className="ml-6 flex items-center">
-																{open ? (
-																	<MinusSmallIcon
-																		className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
-																		aria-hidden="true"
-																	/>
-																) : (
-																	<PlusSmallIcon
-																		className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
-																		aria-hidden="true"
-																	/>
-																)}
-															</span>
-														</Disclosure.Button>
-													</h3>
-													<Disclosure.Panel
-														as="div"
-														className="pb-6 prose prose-sm"
-													>
-														<ul role="list">
-															{detail.items.map(
-																(item) => (
-																	<li
-																		key={
-																			item
-																		}
-																	>
-																		{item}
-																	</li>
-																)
-															)}
-														</ul>
-													</Disclosure.Panel>
-												</>
-											)}
-										</Disclosure>
-									))}
-								</div>
-							</section> */}
-							{/* END PRODUCT FEATURES */}
 						</div>
 					</div>
 				</div>
