@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { HomeBanner } from 'components';
+import { ProductsCards } from 'features/products/components';
 
 export function HomePage() {
 	return (
@@ -12,7 +13,7 @@ export function HomePage() {
 				}
 				sectionTitle={'Pricing'}
 			/>
-			<h1>Home Page</h1>
+			<ProductsCards />
 		</>
 	);
 }
