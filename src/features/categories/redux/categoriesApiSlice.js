@@ -1,4 +1,4 @@
-import { flatMap } from 'lodash';
+import { flatMap, isEmpty } from 'lodash';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const categoryApiSlice = createApi({
@@ -27,9 +27,15 @@ export const categoryApiSlice = createApi({
 		}),
 
 		listParentCategories: builder.mutation({
-			query() {
+			query(idCategories) {
+				const filterByIdParam = !idCategories
+					? ''
+					: isEmpty(idCategories)
+					? ''
+					: `id=${idCategories.join(',')}`;
+
 				return {
-					url: 'categories/parents/',
+					url: `categories/parents/?${filterByIdParam}`,
 					method: 'GET',
 				};
 			},
