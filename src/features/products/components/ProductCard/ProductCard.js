@@ -5,7 +5,7 @@ export function ProductCard(props) {
 	const { product } = props;
 
 	return (
-		<Link to={`products/${product.id}`} className="group">
+		<Link to={`/products/${product.id}`} className="group">
 			<div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
 				<img
 					src={product.photo}
