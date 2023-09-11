@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { HeartIcon } from '@heroicons/react/24/outline';
 import { useParams } from 'react-router-dom';
@@ -24,6 +24,10 @@ export function ProductDetailsPage() {
 	} = useReadProductQuery(id);
 
 	const { data: relatedProducts } = useListRelatedProductsQuery();
+
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, []);
 
 	return (
 		product && (
