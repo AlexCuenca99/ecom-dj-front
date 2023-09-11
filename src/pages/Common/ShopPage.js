@@ -1,34 +1,52 @@
-import React, { useEffect } from 'react';
-import { Fragment, useState } from 'react';
-import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { flatMap, includes, isEmpty, map } from 'lodash';
+import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react';
 import {
-	ChevronDownIcon,
 	AdjustmentsHorizontalIcon,
+	ChevronDownIcon,
 	MinusSmallIcon,
 	PlusSmallIcon,
 	ViewColumnsIcon,
 } from '@heroicons/react/24/outline';
-import { useListParentCategoriesMutation } from 'features/categories/redux/categoriesApiSlice';
-import { map } from 'lodash';
 
-const sortOptions = [
-	{ name: 'Most Popular', href: '#', current: true },
-	{ name: 'Best Rating', href: '#', current: false },
-	{ name: 'Newest', href: '#', current: false },
-	{ name: 'Price: Low to High', href: '#', current: false },
-	{ name: 'Price: High to Low', href: '#', current: false },
-];
+import { ProductsCards } from 'features/products/components';
+import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
+import { useListParentCategoriesMutation } from 'features/categories/redux/categoriesApiSlice';
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ');
 }
 
 export function ShopPage() {
+	const [limit, setLimit] = useState(10);
+	const [offset, setOffset] = useState('');
+	const [search, setSearch] = useState('');
+	const [priceGte, setPriceGte] = useState('');
+	const [priceGt, setPriceGt] = useState('');
+	const [priceLte, setPriceLte] = useState('');
+	const [priceLt, setPriceLt] = useState('');
+	const [category, setCategory] = useState([]);
+	const [ordering, setOrdering] = useState('-sold');
+
 	const [listParentCategories, { isError, isLoading, isSuccess }] =
 		useListParentCategoriesMutation();
+
+	const { data: products } = useListProductsQuery({
+		limit,
+		offset,
+		search,
+		priceGte,
+		priceGt,
+		priceLte,
+		priceLt,
+		category,
+		ordering,
+	});
+
 	const [subCategories, setSubCategories] = useState([]);
 	const [filters, setFilters] = useState([]);
+	const [sortOptions, setSortOptions] = useState([]);
 
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -36,13 +54,6 @@ export function ShopPage() {
 		listParentCategories()
 			.unwrap()
 			.then((fullfilled) => {
-				setSubCategories([
-					{ name: 'Totes', href: '#' },
-					{ name: 'Backpacks', href: '#' },
-					{ name: 'Travel Bags', href: '#' },
-					{ name: 'Hip Bags', href: '#' },
-					{ name: 'Laptop Sleeves', href: '#' },
-				]);
 				setFilters([
 					{
 						id: 'color',
@@ -83,10 +94,63 @@ export function ShopPage() {
 					},
 				]);
 			})
-			.catch((_) => {});
+			.catch((rejected) => {
+				console.log(rejected);
+			});
+
+		setSortOptions([
+			{
+				name: 'Newest',
+				action: () => setOrdering('created'),
+				current: false,
+			},
+			{
+				name: 'Price: Low to High',
+				action: () => setOrdering('price'),
+				current: false,
+			},
+			{
+				name: 'Price: High to Low',
+				action: () => setOrdering('-price'),
+				current: false,
+			},
+		]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		!isEmpty(category)
+			? listParentCategories(category)
+					.unwrap()
+					.then((fullfilled) => {
+						setSubCategories(
+							map(flatMap(fullfilled, 'children'), (item) => ({
+								name: item.name,
+								action: () => {
+									setCategory([item.id]);
+								},
+							}))
+						);
+					})
+					.catch((rejected) => {
+						console.log(rejected);
+					})
+			: setSubCategories([]);
+	}, [category]);
+
+	const handleFilterChange = (e) => {
+		const targetName = e.target.name;
+		const isChecked = e.target.checked;
+
+		if (includes(targetName, 'category')) {
+			const categoryId = e.target.value;
+			if (isChecked) {
+				setCategory([...category, categoryId]);
+			} else {
+				setCategory(category.filter((item) => item !== categoryId));
+			}
+		}
+	};
 	return (
 		<div className="bg-white">
 			<div>
@@ -143,20 +207,28 @@ export function ShopPage() {
 								{/* Filters */}
 								<form className="mt-4 border-t border-gray-200">
 									<h3 className="sr-only">Categories</h3>
-									<ul
-										role="list"
-										className="font-medium text-gray-900 px-2 py-3"
-									>
-										{subCategories.map((category) => (
-											<li key={category.name}>
-												<a
-													href={category.href}
-													className="block px-2 py-3"
+									<ul className="font-medium text-gray-900 px-2 py-3">
+										{!isEmpty(subCategories) ? (
+											subCategories.map((category) => (
+												<li
+													key={category.name}
+													className="cursor-pointer"
 												>
-													{category.name}
-												</a>
-											</li>
-										))}
+													<span
+														onClick={
+															category.action
+														}
+														className="block px-2 py-3"
+													>
+														{category.name}
+													</span>
+												</li>
+											))
+										) : (
+											<span className="font-medium text-gray-900 px-2">
+												No parent category selected
+											</span>
+										)}
 									</ul>
 
 									{filters.map((section) => (
@@ -210,6 +282,9 @@ export function ShopPage() {
 																			defaultChecked={
 																				option.checked
 																			}
+																			onChange={
+																				handleFilterChange
+																			}
 																			className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
 																		/>
 																		<label
@@ -239,7 +314,7 @@ export function ShopPage() {
 				<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="relative z-10 flex items-baseline justify-between pt-24 pb-6 border-b border-gray-200">
 						<h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
-							New Arrivals
+							Products
 						</h1>
 
 						<div className="flex items-center">
@@ -271,8 +346,10 @@ export function ShopPage() {
 											{sortOptions.map((option) => (
 												<Menu.Item key={option.name}>
 													{({ active }) => (
-														<a
-															href={option.href}
+														<span
+															onClick={
+																option.action
+															}
 															className={classNames(
 																option.current
 																	? 'font-medium text-gray-900'
@@ -284,7 +361,7 @@ export function ShopPage() {
 															)}
 														>
 															{option.name}
-														</a>
+														</span>
 													)}
 												</Menu.Item>
 											))}
@@ -329,17 +406,23 @@ export function ShopPage() {
 							{/* Filters */}
 							<form className="hidden lg:block">
 								<h3 className="sr-only">Categories</h3>
-								<ul
-									role="list"
-									className="text-sm font-medium text-gray-900 space-y-4 pb-6 border-b border-gray-200"
-								>
-									{subCategories.map((category) => (
-										<li key={category.name}>
-											<a href={category.href}>
-												{category.name}
-											</a>
-										</li>
-									))}
+								<ul className="text-sm font-medium text-gray-900 space-y-4 pb-6 border-b border-gray-200">
+									{!isEmpty(subCategories) ? (
+										subCategories.map((category) => (
+											<li
+												key={category.id}
+												className="cursor-pointer"
+											>
+												<span onClick={category.action}>
+													{category.name}
+												</span>
+											</li>
+										))
+									) : (
+										<span className="font-medium text-gray-900">
+											No parent category selected
+										</span>
+									)}
 								</ul>
 
 								{filters.map((section) => (
@@ -384,6 +467,9 @@ export function ShopPage() {
 																	className="flex items-center"
 																>
 																	<input
+																		onChange={
+																			handleFilterChange
+																		}
 																		id={`filter-${section.id}-${optionIdx}`}
 																		name={`${section.id}[]`}
 																		defaultValue={
@@ -417,7 +503,13 @@ export function ShopPage() {
 							{/* Product grid */}
 							<div className="lg:col-span-3">
 								{/* Replace with your content */}
-								<div className="border-4 border-dashed border-gray-200 rounded-lg h-96 lg:h-full" />
+								<div className="border-4 border-dashed border-gray-200 rounded-lg h-96 lg:h-full">
+									{products && (
+										<ProductsCards
+											products={products.results}
+										/>
+									)}
+								</div>
 								{/* /End replace */}
 							</div>
 						</div>
