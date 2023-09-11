@@ -6,16 +6,6 @@ import { ProductsCards, BestSellingCards } from 'features/products/components';
 import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
 
 export function HomePage() {
-	// const [limit, setLimit] = useState(4);
-	// const [offset, setOffset] = useState('');
-	// const [search, setSearch] = useState('');
-	// const [priceGte, setPriceGte] = useState('');
-	// const [priceGt, setPriceGt] = useState('');
-	// const [priceLte, setPriceLte] = useState('');
-	// const [priceLt, setPriceLt] = useState('');
-	// const [category, setCategory] = useState('');
-	// const [ordering, setOrdering] = useState('created');
-
 	const {
 		data: arrivalsProducts,
 		isLoading,
@@ -53,7 +43,7 @@ export function HomePage() {
 					'Start building for free, then add a site plan to go live. Account plans unlock additional features.'
 				}
 				btnTitle={'Shop'}
-				btnAction={'/'}
+				btnAction={'/shop'}
 				images={[]}
 			/>
 			<ProductsCards products={arrivalsProducts?.results} />
