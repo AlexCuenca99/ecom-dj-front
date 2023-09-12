@@ -22,10 +22,7 @@ export function ShopPage() {
 	const [limit, setLimit] = useState(10);
 	const [offset, setOffset] = useState('');
 	const [search, setSearch] = useState('');
-	const [priceGte, setPriceGte] = useState('');
-	const [priceGt, setPriceGt] = useState('');
-	const [priceLte, setPriceLte] = useState('');
-	const [priceLt, setPriceLt] = useState('');
+	const [prices, setPrices] = useState([]);
 	const [category, setCategory] = useState([]);
 	const [ordering, setOrdering] = useState('-sold');
 
@@ -36,10 +33,7 @@ export function ShopPage() {
 		limit,
 		offset,
 		search,
-		priceGte,
-		priceGt,
-		priceLte,
-		priceLt,
+		prices,
 		category,
 		ordering,
 	});
@@ -55,22 +49,22 @@ export function ShopPage() {
 			.unwrap()
 			.then((fullfilled) => {
 				setFilters([
-					{
-						id: 'color',
-						name: 'Color',
-						options: [
-							{ value: 'white', label: 'White', checked: false },
-							{ value: 'beige', label: 'Beige', checked: false },
-							{ value: 'blue', label: 'Blue', checked: true },
-							{ value: 'brown', label: 'Brown', checked: false },
-							{ value: 'green', label: 'Green', checked: false },
-							{
-								value: 'purple',
-								label: 'Purple',
-								checked: false,
-							},
-						],
-					},
+					// {
+					// 	id: 'color',
+					// 	name: 'Color',
+					// 	options: [
+					// 		{ value: 'white', label: 'White', checked: false },
+					// 		{ value: 'beige', label: 'Beige', checked: false },
+					// 		{ value: 'blue', label: 'Blue', checked: true },
+					// 		{ value: 'brown', label: 'Brown', checked: false },
+					// 		{ value: 'green', label: 'Green', checked: false },
+					// 		{
+					// 			value: 'purple',
+					// 			label: 'Purple',
+					// 			checked: false,
+					// 		},
+					// 	],
+					// },
 					{
 						id: 'category',
 						name: 'Category',
@@ -81,15 +75,29 @@ export function ShopPage() {
 						})),
 					},
 					{
-						id: 'size',
-						name: 'Size',
+						id: 'price',
+						name: 'Price',
 						options: [
-							{ value: '2l', label: '2L', checked: false },
-							{ value: '6l', label: '6L', checked: false },
-							{ value: '12l', label: '12L', checked: false },
-							{ value: '18l', label: '18L', checked: false },
-							{ value: '20l', label: '20L', checked: false },
-							{ value: '40l', label: '40L', checked: true },
+							{
+								value: 'price__gte=0,price__lte=25',
+								label: '0$ - 25',
+								checked: false,
+							},
+							{
+								value: 'price__gt=25,price__lte=50',
+								label: '25$ - 50$',
+								checked: false,
+							},
+							{
+								value: 'price__gt=50,price__lte=75',
+								label: '50 $ - 75$',
+								checked: false,
+							},
+							{
+								value: 'price__gt=75',
+								label: '75$+',
+								checked: false,
+							},
 						],
 					},
 				]);
@@ -148,6 +156,15 @@ export function ShopPage() {
 				setCategory([...category, categoryId]);
 			} else {
 				setCategory(category.filter((item) => item !== categoryId));
+			}
+		} else {
+			if (includes(targetName, 'price')) {
+				const price = e.target.value;
+				if (isChecked) {
+					setPrices([...prices, price]);
+				} else {
+					setPrices(prices.filter((item) => item !== price));
+				}
 			}
 		}
 	};
