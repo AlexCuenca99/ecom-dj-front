@@ -1,4 +1,5 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { map } from 'lodash';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react';
@@ -10,6 +11,7 @@ import {
 	FingerPrintIcon,
 	SquaresPlusIcon,
 	XMarkIcon,
+	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import {
 	ChevronDownIcon,
@@ -18,6 +20,8 @@ import {
 } from '@heroicons/react/20/solid';
 
 import { AuthNavMenu } from 'features/authentication/components';
+import { useListParentCategoriesMutation } from 'features/categories/redux/categoriesApiSlice';
+import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
 
 const products = [
 	{
@@ -62,8 +66,42 @@ function classNames(...classes) {
 
 export function NavBar() {
 	const auth = useSelector((state) => state.authentication);
+	const [parentCategories, setParentCategories] = useState([]);
+	const [searchTerm, setSearchTerm] = useState('');
+	const [category, setCategory] = useState('');
+	const [fetch, setFetch] = useState(false);
+
+	const [listParentCategories] = useListParentCategoriesMutation();
+	const { data: productsData } = useListProductsQuery({
+		limit: 4,
+		search: searchTerm,
+		category: category,
+	});
+
+	useEffect(() => {
+		listParentCategories()
+			.unwrap()
+			.then((fullfilled) => {
+				setParentCategories(fullfilled);
+			})
+			.catch((rejected) => {
+				console.log(rejected);
+			});
+	}, []);
 
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+	const handleSearch = () => {
+		setFetch((prev) => !prev);
+	};
+
+	const handleSearchChange = (e) => {
+		setSearchTerm(e.target.value);
+	};
+
+	const handleCategoryChange = (e) => {
+		setCategory(e.target.value);
+	};
 
 	return (
 		<header className="bg-white">
@@ -110,7 +148,7 @@ export function NavBar() {
 							leaveFrom="opacity-100 translate-y-0"
 							leaveTo="opacity-0 translate-y-1"
 						>
-							<Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+							<Popover.Panel className="absolute -left-8 top-full z-20 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
 								<div className="p-4">
 									{products.map((item) => (
 										<div
@@ -157,6 +195,165 @@ export function NavBar() {
 						</Transition>
 					</Popover>
 
+					<Popover className="relative">
+						<Popover.Button
+							className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
+							onClick={() => {
+								setSearchTerm('');
+								setCategory('');
+							}}
+						>
+							Search
+							<ChevronDownIcon
+								className="h-5 w-5 flex-none text-gray-400"
+								aria-hidden="true"
+							/>
+						</Popover.Button>
+
+						<Transition
+							as={Fragment}
+							enter="transition ease-out duration-200"
+							enterFrom="opacity-0 translate-y-1"
+							enterTo="opacity-100 translate-y-0"
+							leave="transition ease-in duration-150"
+							leaveFrom="opacity-100 translate-y-0"
+							leaveTo="opacity-0 translate-y-1"
+						>
+							<Popover.Panel className="absolute -left-8 top-full z-20 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+								<div className="p-4">
+									<div className="p-4 space-y-5 w-full">
+										<div>
+											<label
+												htmlFor="example10"
+												className="mb-1 block text-sm font-medium text-gray-700"
+											>
+												Your search
+											</label>
+											<div className="relative">
+												<div className="absolute inset-y-0 left-0 flex items-center text-gray-500">
+													<label
+														htmlFor="currency"
+														className="sr-only"
+													>
+														Currency
+													</label>
+													<select
+														id="currency"
+														className="h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+														onChange={
+															handleCategoryChange
+														}
+													>
+														{map(
+															parentCategories,
+															(category) => (
+																<option
+																	key={
+																		category.id
+																	}
+																	value={
+																		category.id
+																	}
+																>
+																	{
+																		category.name
+																	}
+																</option>
+															)
+														)}
+													</select>
+												</div>
+												<div
+													className={classNames(
+														searchTerm !== ''
+															? 'cursor-pointer'
+															: 'cursor-not-allowed',
+														'absolute inset-y-0 right-0 flex items-center px-2.5'
+													)}
+													onClick={handleSearch}
+												>
+													<MagnifyingGlassIcon className="h-5 w-5 text-gray-700" />
+												</div>
+												<input
+													onChange={
+														handleSearchChange
+													}
+													type="text"
+													id="example10"
+													className="block w-full rounded-md border-gray-300 pl-32 pr-10 shadow-sm focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500"
+													placeholder="Search something..."
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+								{/* PRODUCT PREVIEW */}
+
+								<div className="px-4">
+									<ul className="px-4 -my-6 divide-y divide-gray-200">
+										{productsData.results.map((product) => (
+											<li
+												key={product.id}
+												className="flex py-6"
+											>
+												<div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+													<img
+														src={product.photo}
+														alt={product.name}
+														className="h-full w-full object-cover object-center"
+													/>
+												</div>
+
+												<div className="ml-4 flex flex-1 flex-col">
+													<div>
+														<div className="flex justify-between text-base font-medium text-gray-900">
+															<h3>
+																<a
+																	href={
+																		product.href
+																	}
+																>
+																	{
+																		product.name
+																	}
+																</a>
+															</h3>
+															<p className="ml-4">
+																{product.price}
+															</p>
+														</div>
+														<p className="mt-1 text-sm text-gray-500">
+															{
+																product.description
+															}
+														</p>
+													</div>
+												</div>
+											</li>
+										))}
+									</ul>
+								</div>
+
+								{/* END PRODUCT PREVIEW */}
+								<div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+									{callsToAction.map((item) => (
+										<a
+											key={item.name}
+											href={item.href}
+											className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+										>
+											<item.icon
+												className="h-5 w-5 flex-none text-gray-400"
+												aria-hidden="true"
+											/>
+											{item.name}
+										</a>
+									))}
+								</div>
+							</Popover.Panel>
+						</Transition>
+					</Popover>
+
 					<a
 						href="#"
 						className="text-sm font-semibold leading-6 text-gray-900"
@@ -168,12 +365,6 @@ export function NavBar() {
 						className="text-sm font-semibold leading-6 text-gray-900"
 					>
 						Marketplace
-					</a>
-					<a
-						href="#"
-						className="text-sm font-semibold leading-6 text-gray-900"
-					>
-						Company
 					</a>
 				</Popover.Group>
 				<div className="hidden lg:flex lg:flex-1 lg:justify-end">
