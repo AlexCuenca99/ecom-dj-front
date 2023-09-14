@@ -20,7 +20,7 @@ import {
 } from '@heroicons/react/20/solid';
 
 import { AuthNavMenu } from 'features/authentication/components';
-import { SearchProductsCard } from 'features/products/components';
+import { SearchProductsCards } from 'features/products/components';
 import { useListParentCategoriesMutation } from 'features/categories/redux/categoriesApiSlice';
 import { useListProductsQuery } from 'features/products/redux/productsApiSlice';
 
@@ -288,23 +288,11 @@ export function NavBar() {
 										</div>
 									</div>
 								</div>
+
 								{/* PRODUCT PREVIEW */}
-
-								<div className="px-4">
-									<ul className="px-4 -my-6 divide-y divide-gray-200">
-										{productsData &&
-											productsData.results.map(
-												(product) => (
-													<SearchProductsCard
-														key={product.id}
-														product={product}
-													/>
-												)
-											)}
-									</ul>
-								</div>
-
+								<SearchProductsCards products={productsData} />
 								{/* END PRODUCT PREVIEW */}
+
 								<div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
 									{callsToAction.map((item) => (
 										<a
