@@ -235,7 +235,7 @@ export function NavBar() {
 														htmlFor="currency"
 														className="sr-only"
 													>
-														Currency
+														Category
 													</label>
 													<select
 														id="currency"
