@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from 'utils/constanst';
 
 const initialState = { isAuth: false, user: null, tokens: [] };
@@ -21,6 +21,7 @@ const authenticationSlice = createSlice({
 				gender: action.payload.gender,
 				birth: action.payload.birth,
 				email: action.payload.email,
+				cart_id: action.payload.cart_id,
 			};
 			state.tokens = [
 				{
