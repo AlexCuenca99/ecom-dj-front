@@ -4,7 +4,6 @@ import { ToastContainer } from 'react-toastify';
 
 import { NavBar, Footer } from 'components';
 import { ACCESS_TOKEN } from 'utils/constanst';
-import { LoginPage } from 'pages/AuthPages';
 import { login } from 'features/authentication/authenticationSlice';
 import { useGetMeMutation } from 'features/authentication/usersApiSlice';
 import { useVerifyMutation } from 'features/authentication/authenticationApiSlice';
@@ -13,7 +12,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export function AuthLayout(props) {
 	const { children } = props;
-	const auth = useSelector((state) => state.authentication);
 
 	const [getMe] = useGetMeMutation();
 	const [verify] = useVerifyMutation();
